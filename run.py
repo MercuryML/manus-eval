@@ -96,7 +96,7 @@ class MessageEval:
     
     @property
     def score(self):
-        return round(self._score / self._score_party_count,1)
+        return round(self._score / self._score_party_count,1) * 10
     
     def compute(self):
         self.has_success_rag()
@@ -122,29 +122,31 @@ class MessageEval:
         return has_tool
     
     def has_success_plan(self):
-        """具有计划调用, 监测通用计划调用(function name: plan_query)"""
-        has_plan = any([msg['message']['name'] == "plan_query" for msg in self.messages if msg['role'] == "tool"])
+        """具有计划调用, 监测通用计划调用(function name: planning)"""
+        has_plan = any([msg['message']['name'] == "planning" for msg in self.messages if msg['role'] == "tool"])
         self._score += 1 if has_plan else 0
         self._score_party_count += 1
         return has_plan
 
     def has_success_sql(self):
-        """具有 sql 调用, 监测通用 sql 调用(function name: sql_query)"""
-        has_sql = any([msg['message']['name'] == "sql_query" for msg in self.messages if msg['role'] == "tool"])
+        """具有 sql 调用, 监测通用 sql"""
+        tmp_sql_tool_name = "mcp-clickhouse-global-access-run_select_query"
+        has_sql = any([msg['message']['name'] == tmp_sql_tool_name for msg in self.messages if msg['role'] == "tool"])
         self._score += 1 if has_sql else 0
         self._score_party_count += 1
         return has_sql
 
     def has_success_terminal(self):
         """具有 终端 调用, 监测通用终端调用(function name: terminal_query)"""
-        has_terminal = any([msg['message']['name'] == "terminal_query" for msg in self.messages if msg['role'] == "tool"])
+        has_terminal = any([msg['message']['name'] == "terminate" for msg in self.messages if msg['role'] == "tool"])
         self._score += 1 if has_terminal else 0
         self._score_party_count += 1
         return has_terminal
 
     def has_success_html(self):
         """具有 html 调用, 监测通用 html 调用(function name: html_query)"""
-        has_html = any([msg['message']['name'] == "html_query" for msg in self.messages if msg['role'] == "tool"])
+        p = re.compile(r".*```[ \t]*html.+```.*",re.DOTALL)
+        has_html = any([p.match(msg['message']['content']) for msg in self.messages if msg['role'] == "assistant"])
         self._score += 1 if has_html else 0
         self._score_party_count += 1
         return has_html
