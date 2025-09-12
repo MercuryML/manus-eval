@@ -1,0 +1,7 @@
+*.log
+local-config.toml
+*.pyc
+*.data
+.env
+*.DS_Store
+
