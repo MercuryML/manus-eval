@@ -1,0 +1,74 @@
+name = "base"
+# 基础的分组
+description = "you are a helpful assistant"
+# [base.rules]
+# role: 
+#   1. assistant: 助手(大模型回答内容)
+#   2. tool: 工具调用
+#   3. user: 用户输入
+#   4. system: 系统提示词
+# action: 使用何种方式进行检查
+#   1. regex: 正则匹配, pattern 指定表达式
+#   2. contains: 是否包含指定的字符串, text 指定内容
+#   3. function: 是否存在指定的工具调用, text/pattern 指定表达式
+#   4. llm: 使用大模型进行判断, prompt 指定提示内容
+#   5. steps_count: 在 [m,n] 轮对话内解决问题, values 指定范围
+# pattern: 正则表达式
+# text: 文本匹配
+# prompt: [{"content": "xxx", "name": "prompt_name"}] 大模型工具调用提示词
+# values: [m,n] 长度在 m <= steps <= n 之间
+
+[[rules]]
+# 检查助手输出是否包含python代码块 has python codes
+role = ["assistant"]
+action = "regex"
+pattern = ".*```[ \t]*python.+```.*"
+[[rules]]
+# 检查助手输出是否包含html代码块 has html
+role = ["assistant"]
+action = "regex"
+pattern = ".*```[ \t]*html.+```.*"
+[[rules]]
+# 检查使用有进行过工具调用 has tool call
+role = ["tool"]
+action = "function"
+pattern = "^.+$"
+[[rules]]
+# 检查使用有进行过工具调用 rag query
+role = ["tool"]
+action = "function"
+pattern = "^rag_query$"
+
+[[rules]]
+# 检查使用有进行过工具调用(plan)
+role = ["tool"]
+action = "function"
+pattern = "^planning$"
+
+[[rules]]
+# 有进行过sql查询
+role = ["tool"]
+action = "function"
+text = "mcp-clickhouse-global-access-run_select_query"
+
+[[rules]]
+# 有正确的终止(terminate)
+role = ["tool"]
+action = "function"
+pattern = "^terminate$"
+
+[[rules]]
+# 有正确的终止(terminate)
+role = ["assistant"]
+action = "steps_count"
+values = [1,7]
+
+[[rules]]
+role = ["assistant","tool","user","system"]
+action = "llm"
+prompt = [
+    {content = "是否详尽完整?", name = "is_full_content"},
+    {content = "对话内容中不存在虚假或假设的数据.", name = "n_virtual_assumption"},
+    {content = "如果有数字,数学,统计,计算,金融,数据库等信息, 其来源是否都是从工具中调取? ", name = "is_source_from_tools"},
+    {content = "助手的回答是否严格遵循给出的指示?", name = "is_meet_requirements"},
+]

@@ -1,0 +1,16 @@
+name: manus-eval
+channels:
+  - defaults
+dependencies:
+  - python=3.12
+  - numpy=1.26.4
+  - pandas
+  - matplotlib
+  - scipy
+  - scikit-learn
+  - pyarrow
+  - ruff
+  - pip
+  - pip:
+    - python-dotenv
+    - -r requirements.txt

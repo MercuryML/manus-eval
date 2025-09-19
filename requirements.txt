@@ -4,10 +4,8 @@ toml
 pandas
 polars
 pyarrow
-ruff
 matplotlib
 seaborn
 psycopg2-binary
 sqlalchemy
-python-dotenv
 tqdm
