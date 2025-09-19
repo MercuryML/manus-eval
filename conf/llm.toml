@@ -19,45 +19,6 @@ description = "you are a helpful assistant"
 # values: [m,n] 长度在 m <= steps <= n 之间
 
 [[rules]]
-# 检查助手输出是否包含python代码块 has python codes
-role = ["assistant"]
-action = "regex"
-pattern = ".*```[ \t]*python.+```.*"
-[[rules]]
-# 检查助手输出是否包含html代码块 has html
-role = ["assistant"]
-action = "regex"
-pattern = ".*```[ \t]*html.+```.*"
-[[rules]]
-# 检查使用有进行过工具调用 has tool call
-role = ["tool"]
-action = "function"
-pattern = "^.+$"
-[[rules]]
-# 检查使用有进行过工具调用 rag query
-role = ["tool"]
-action = "function"
-pattern = "^rag_query$"
-
-[[rules]]
-# 检查使用有进行过工具调用(plan)
-role = ["tool"]
-action = "function"
-pattern = "^planning$"
-
-[[rules]]
-# 有进行过sql查询
-role = ["tool"]
-action = "function"
-text = "mcp-clickhouse-global-access-run_select_query"
-
-[[rules]]
-# 有正确的终止(terminate)
-role = ["tool"]
-action = "function"
-pattern = "^terminate$"
-
-[[rules]]
 # 回答内容在[m,n]个步骤之间
 role = ["assistant"]
 action = "steps_count"

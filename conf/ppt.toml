@@ -1,6 +1,6 @@
 name = "base"
 # 基础的分组
-description = "you are a helpful assistant"
+description = "你是一个 ppt(PowerPoint) 专家"
 # [base.rules]
 # role: 
 #   1. assistant: 助手(大模型回答内容)
